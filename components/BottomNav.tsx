@@ -4,10 +4,10 @@ import { usePathname } from 'next/navigation';
 import { useCart } from '@/lib/cart';
 
 const items = [
-  { href: '/', label: 'Home', icon: '🏠' },
   { href: '/menu', label: 'Menu', icon: '🍽️' },
+  { href: '/track', label: 'Track', icon: '📦' },
   { href: '/cart', label: 'Cart', icon: '🛒' },
-  { href: '/track', label: 'Orders', icon: '📦' },
+  { href: '/store', label: 'Store', icon: '🏪' },
 ];
 
 export default function BottomNav() {
@@ -18,7 +18,7 @@ export default function BottomNav() {
       {items.map(it => {
         const active = pathname === it.href;
         return (
-          <Link key={it.href} href={it.href} className={`flex flex-col items-center text-xs ${active ? 'text-orange-600 font-semibold' : 'text-stone-500'}`}>
+          <Link key={it.href} href={it.href} className={`flex flex-col items-center text-xs ${active ? 'text-brand font-semibold' : 'text-stone-500'}`}>
             <span className="text-lg relative">
               {it.icon}
               {it.label === 'Cart' && count > 0 && (

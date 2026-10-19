@@ -3,27 +3,30 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
 
-const CATEGORIES = [
-  { name: 'Snacks', desc: 'Crispy bites', img: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Fries', desc: 'Golden & hot', img: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Rolls & Wraps', desc: 'Stuffed parathas', img: 'https://images.unsplash.com/photo-1626700051175-656a433bcfcf?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Momos', desc: 'Steamed & fried', img: 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Sandwich', desc: 'Toasted & grilled', img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Khichdi & Patties', desc: 'Comfort food', img: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Burgers', desc: 'Juicy stacks', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Pizza', desc: 'Cheesy slices', img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Mocktails & Tea', desc: 'Cool & hot sips', img: 'https://images.unsplash.com/photo-1544145945-f904253d0c71?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Shakes & Desserts', desc: 'Sweet endings', img: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80' },
+const CATS = [
+  { emoji: '🥟', name: 'Momos' },
+  { emoji: '🌯', name: 'Rolls' },
+  { emoji: '🍟', name: 'Snacks' },
+  { emoji: '🥪', name: 'Sandwich' },
+  { emoji: '🍔', name: 'Burgers' },
+  { emoji: '🍕', name: 'Pizza' },
+  { emoji: '☕', name: 'Chai' },
+  { emoji: '🥤', name: 'Shakes' },
+  { emoji: '🍨', name: 'Sweets' },
 ];
 
 export default function Home() {
   const [items, setItems] = useState<any[]>([]);
-  const [mood, setMood] = useState('🔥 All-Time Hits');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { add, count } = useCart();
+  const [selected, setSelected] = useState<any | null>(null);
+  const [spice, setSpice] = useState('Medium');
+  const [addons, setAddons] = useState<string[]>([]);
+  const { add, count, total } = useCart();
 
   useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('ck_menu') : null;
+    if (saved) { setItems(JSON.parse(saved)); setLoading(false); return; }
     const ctrl = new AbortController();
     fetch('/api/menu', { signal: ctrl.signal })
       .then(async r => {
@@ -40,101 +43,86 @@ export default function Home() {
 
   const popular = items.filter(i => i.is_popular).slice(0, 6);
 
+  const openModal = (i: any) => { setSelected(i); setSpice('Medium'); setAddons([]); };
+  const modalPrice = selected ? selected.price + addons.reduce((s, a) => s + (a === 'Extra Cheese' ? 20 : a === 'Extra Chutney' ? 10 : 15), 0) : 0;
+
   return (
     <div className="min-h-screen bg-cream pb-32">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-cream border-b border-stone-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🔥</span>
-            <div>
-              <div className="font-display text-lg font-bold text-charcoal leading-none">CRISPY कढई</div>
-              <div className="text-[10px] tracking-widest text-stone-500">CAFÉ AND SNACKS</div>
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center">👤</div>
+              <div>
+                <div className="text-xs text-stone-500">Good morning,</div>
+                <div className="font-bold text-sm">Campus Foodie! 👋</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">🪙 85 Coins</div>
+              <Link href="/cart" className="relative bg-charcoal text-white px-3 py-1.5 rounded-full text-sm">🛒
+                {count > 0 && <span className="absolute -top-1 -right-1 bg-brand text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">{count}</span>}
+              </Link>
             </div>
           </div>
-          <Link href="/cart" className="bg-charcoal text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-            🛒 Cart
-            {count > 0 && <span className="bg-brand text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{count}</span>}
-          </Link>
+          <div className="mt-2 flex items-center justify-between bg-white rounded-full px-4 py-2 text-sm shadow-card">
+            <span>📍 Main Canteen, Block A ▾</span>
+            <span className="text-xs text-stone-500">Delivering in ~15 mins</span>
+          </div>
+          <div className="mt-2 flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-card">
+            <span>🔍</span>
+            <input placeholder="Search 'Paneer Momos', 'Kulhad Chai'..." className="flex-1 text-sm outline-none" />
+            <span>⚙️</span>
+          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative text-white">
-        <img src="/images/stall/shopfront.jpg" alt="Crispy Katta shopfront" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-6xl mx-auto px-4 py-12">
-          <div className="inline-block bg-brand/20 border border-brand/40 text-brand text-xs uppercase tracking-widest px-3 py-1 rounded-full mb-4">Campus Gate No. 2 • Café and Snacks</div>
-          <h1 className="font-display text-5xl md:text-6xl font-bold leading-none tracking-tight">Crispy. Spicy. कढई swad.</h1>
-          <p className="mt-4 text-stone-200 max-w-md">चव कढई... निखेला आवडेल तही... samosas, momos, rolls, burgers and filter coffee, fried to order and flown to your hostel.</p>
-          <div className="mt-6 flex gap-3">
-            <Link href="/menu" className="px-6 py-3 bg-brand text-white rounded-full font-semibold text-sm">Order now →</Link>
-            <Link href="/track" className="px-6 py-3 border border-white/40 rounded-full text-sm backdrop-blur-sm bg-white/10">Track order</Link>
-          </div>
-          <div className="mt-6 flex flex-wrap gap-2">
-            <span className="bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs">42+ items</span>
-            <span className="bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs">from ₹12</span>
-            <span className="bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs">~20 min prep</span>
-            <span className="bg-red-600/80 px-3 py-1 rounded-full text-xs">Closed</span>
-          </div>
+      {/* Hero banners */}
+      <section className="max-w-6xl mx-auto px-4 py-4 flex gap-3 overflow-x-auto">
+        <div className="min-w-[280px] bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-3xl p-5">
+          <div className="font-bold text-lg">Hungry between classes?</div>
+          <div className="text-sm opacity-90 mt-1">Get crispy Samosas & Chai delivered hot in 10 mins 🚀</div>
+          <Link href="/menu" className="mt-3 inline-block px-4 py-2 bg-white text-orange-600 rounded-full text-sm font-semibold">Order Now</Link>
+        </div>
+        <div className="min-w-[280px] bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-3xl p-5">
+          <div className="font-bold text-lg">Flat 20% OFF on Momos! 🥟</div>
+          <div className="text-sm opacity-90 mt-1">Use code: MOMO20 at checkout</div>
         </div>
       </section>
 
-      {/* Marquee */}
-      <div className="bg-amber-400 overflow-hidden py-2">
-        <div className="whitespace-nowrap animate-marquee text-sm font-semibold text-charcoal">
-          🔥 KADHI SAMOSA ₹35  ⚡ PERI PERI VADA ₹25  🔥 PANEER MOMOS ₹80  ⚡ SPECIAL KULHAD CHAI ₹20  🔥 KADHI SAMOSA ₹35  ⚡ PERI PERI VADA ₹25  🔥 PANEER MOMOS ₹80  ⚡ SPECIAL KULHAD CHAI ₹20
-        </div>
-      </div>
-
-      {/* Mood filters */}
-      <section className="max-w-6xl mx-auto px-4 py-4 flex gap-2 overflow-x-auto">
-        {['🔥 All-Time Hits','💸 Broke AF (< ₹40)','🌙 Late Night Cravings','☕ Exam Night Caffeine','🧀 Loaded Cheese','🌶️ Spicy Snack'].map(m => (
-          <button key={m} onClick={() => setMood(m)} className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs border ${mood===m ? 'bg-brand text-white border-brand' : 'bg-white text-stone-700 border-stone-200'}`}>{m}</button>
-        ))}
-      </section>
-
-      {/* Trust / featured strip */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">Student Favourites</div>
-        <h2 className="font-display text-2xl font-bold mb-4">Featured food</h2>
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {items.slice(0, 5).map(i => (
-            <div key={i.id} className="min-w-[160px] bg-white rounded-3xl shadow-card overflow-hidden">
-              <img src={i.image_url} alt={i.name} className="w-full h-28 object-cover" />
-              <div className="p-3">
-                <div className="font-semibold text-sm">{i.name}</div>
-                <div className="text-brand font-bold text-sm mt-1">₹{i.price}</div>
-              </div>
-            </div>
+      {/* Circular categories */}
+      <section className="max-w-6xl mx-auto px-4 py-4">
+        <div className="flex gap-4 overflow-x-auto pb-2">
+          {CATS.map(c => (
+            <button key={c.name} className="flex flex-col items-center gap-1 min-w-[60px]">
+              <div className="w-14 h-14 rounded-full bg-white border border-stone-200 flex items-center justify-center text-2xl ring-2 ring-transparent hover:ring-brand hover:bg-orange-50">{c.emoji}</div>
+              <span className="text-xs text-stone-600">{c.name}</span>
+            </button>
           ))}
         </div>
       </section>
 
       {/* Popular items */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">Cravings, Sorted</div>
-        <h2 className="font-display text-2xl font-bold mb-4">Popular right now</h2>
-        {loading && <div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[...Array(6)].map((_,i)=><div key={i} className="h-48 bg-white rounded-3xl animate-pulse"/>)}</div>}
-        {error && <p className="text-red-600">Failed to load menu: {error}</p>}
-        {!loading && !error && popular.length === 0 && <p className="text-stone-500">No popular items.</p>}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <section className="max-w-6xl mx-auto px-4 py-4">
+        <h2 className="font-display text-xl font-bold mb-3">Popular right now</h2>
+        {loading && <div className="grid grid-cols-2 gap-3">{[...Array(4)].map((_,i)=><div key={i} className="h-48 bg-white rounded-2xl animate-pulse"/>)}</div>}
+        {error && <p className="text-red-600">{error}</p>}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {popular.map(i => (
-            <div key={i.id} className="bg-white rounded-3xl shadow-card overflow-hidden">
+            <div key={i.id} onClick={() => openModal(i)} className="bg-white rounded-2xl shadow-card overflow-hidden cursor-pointer">
               <div className="relative">
-                <img src={i.image_url} alt={i.name} className="w-full h-36 object-cover" />
-                <span className="absolute top-2 left-2 bg-brand text-white text-xs px-2 py-0.5 rounded-full">🔥 Popular</span>
+                <img src={i.image_url} alt={i.name} className="w-full h-32 object-cover" />
+                <span className="absolute top-2 left-2 text-xs">🟢</span>
+                {i.is_popular && <span className="absolute top-2 right-2 bg-brand text-white text-[10px] px-2 py-0.5 rounded-full">🔥 Popular</span>}
+                <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full">⭐ 4.6</span>
+                <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full">⏱️ 12 min</span>
               </div>
-              <div className="p-3">
-                <div className="flex items-center gap-1">
-                  <span className="text-green-600 text-xs">🟢</span>
-                  <h3 className="font-semibold text-sm">{i.name}</h3>
-                </div>
-                <p className="text-xs text-stone-500 line-clamp-1 mt-1">{i.description}</p>
-                <div className="text-xs text-stone-400 mt-1">⏱️ 10 min</div>
+              <div className="p-2">
+                <div className="font-bold text-gray-900 text-sm">{i.name}</div>
+                <div className="text-xs text-gray-500 line-clamp-1">{i.description}</div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="font-bold text-brand">₹{i.price}</span>
-                  <button onClick={() => add(i)} className="px-3 py-1.5 bg-brand text-white text-xs rounded-lg active:scale-95">+ Add</button>
+                  <span className="font-bold text-brand text-sm">₹{i.price}</span>
                 </div>
               </div>
             </div>
@@ -142,34 +130,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">Cravings, sorted</div>
-        <h2 className="font-serif italic text-2xl font-bold mb-4">Cravings, sorted</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {CATEGORIES.map(c => (
-            <Link key={c.name} href={`/menu?cat=${encodeURIComponent(c.name)}`} className="relative rounded-3xl overflow-hidden shadow-card aspect-[4/5] block hover:scale-105 transition-transform duration-300">
-              <img src={c.img} alt={c.name} className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-3 left-3">
-                <div className="text-white font-bold text-lg">{c.name}</div>
-                <div className="text-gray-200 text-xs">{c.desc}</div>
-              </div>
-            </Link>
-          ))}
+      {/* Floating cart bar */}
+      {count > 0 && (
+        <div className="fixed bottom-20 left-4 right-4 z-40 bg-emerald-600 text-white rounded-2xl shadow-xl px-4 py-3 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold">{count} ITEMS | ₹{total}</div>
+            <div className="text-xs opacity-90">Extra discount applied</div>
+          </div>
+          <Link href="/cart" className="px-4 py-2 bg-white text-emerald-600 rounded-xl font-semibold text-sm">View Cart 🛒 →</Link>
         </div>
-      </section>
+      )}
 
-      {/* How ordering works */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">How it works</div>
-        <h2 className="font-display text-2xl font-bold mb-4">Order in 3 steps</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="bg-white rounded-3xl p-4 shadow-card">1. Browse the menu and add items to your cart.</div>
-          <div className="bg-white rounded-3xl p-4 shadow-card">2. Enter your details and confirm the order.</div>
-          <div className="bg-white rounded-3xl p-4 shadow-card">3. Track your order and collect when ready.</div>
+      {/* Bottom sheet modal */}
+      {selected && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end" onClick={() => setSelected(null)}>
+          <div className="bg-white w-full rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setSelected(null)} className="absolute top-3 right-4 text-xl">✕</button>
+            <img src={selected.image_url} alt={selected.name} className="w-full h-40 object-cover rounded-2xl mb-3" />
+            <div className="font-bold text-lg">{selected.name}</div>
+            <div className="text-sm text-stone-500 mb-2">{selected.description}</div>
+            <div className="font-bold text-brand mb-3">₹{selected.price}</div>
+            <div className="mb-3">
+              <div className="text-sm font-semibold mb-1">Choose Spice Level</div>
+              <div className="flex gap-2">
+                {['Mild','Medium','Extra Spicy 🌶️'].map(s => (
+                  <button key={s} onClick={() => setSpice(s)} className={`px-3 py-1.5 rounded-full text-xs border ${spice===s ? 'bg-brand text-white border-brand' : 'bg-white border-stone-200'}`}>{s}</button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-4">
+              <div className="text-sm font-semibold mb-1">Add-ons</div>
+              {['Extra Cheese','Extra Chutney','Mayo Dip'].map(a => (
+                <label key={a} className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={addons.includes(a)} onChange={e => setAddons(e.target.checked ? [...addons, a] : addons.filter(x => x !== a))} />
+                  {a} {a === 'Extra Cheese' ? '+₹20' : a === 'Extra Chutney' ? '+₹10' : '+₹15'}
+                </label>
+              ))}
+            </div>
+            <button onClick={() => { add(selected); setSelected(null); }} className="w-full py-3 bg-brand text-white rounded-xl font-semibold">Add to Cart • ₹{modalPrice}</button>
+          </div>
         </div>
-      </section>
+      )}
     </div>
   );
 }

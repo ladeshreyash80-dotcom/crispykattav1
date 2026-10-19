@@ -8,10 +8,18 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/menu')
-      .then(r => r.json())
-      .then(d => { setItems(d.items ?? []); setLoading(false); })
-      .catch(e => { setError(e.message); setLoading(false); });
+    const ctrl = new AbortController();
+    fetch('/api/menu', { signal: ctrl.signal })
+      .then(async r => {
+        const text = await r.text();
+        let d: any = {};
+        try { d = text ? JSON.parse(text) : {}; } catch { throw new Error('Invalid JSON response'); }
+        if (!r.ok) throw new Error(d?.error || `HTTP ${r.status}`);
+        setItems(Array.isArray(d.items) ? d.items : []);
+      })
+      .catch(e => { if (e.name !== 'AbortError') setError(e.message || 'Failed to load menu'); })
+      .finally(() => setLoading(false));
+    return () => ctrl.abort();
   }, []);
 
   return (

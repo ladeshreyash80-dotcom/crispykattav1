@@ -91,6 +91,24 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Real campus stall */}
+      <section className="max-w-6xl mx-auto px-4 py-4">
+        <div className="bg-white rounded-3xl p-4 shadow-card">
+          <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-1">Visit our stall at gate no. 2</div>
+          <h2 className="font-display text-xl font-bold mb-3">The stall</h2>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80" alt="Aerial" className="w-full h-28 object-cover rounded-2xl" />
+            <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=800&q=80" alt="Stall front" className="w-full h-28 object-cover rounded-2xl" />
+          </div>
+          <div className="text-xs text-stone-600 mb-2">Outside Campus Gate 2 • Under the Banyan Tree</div>
+          <div className="flex gap-2 flex-wrap">
+            <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">🟢 Open Now (10:00 - 23:00)</span>
+            <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full">⚡ ~12 min prep</span>
+          </div>
+        </div>
+        <div className="mt-3 bg-brand/10 border border-brand/30 rounded-full px-4 py-2 text-sm text-center">🔥 18 campus students ordered in the last 30 mins!</div>
+      </section>
+
       {/* Circular categories */}
       <section className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex gap-4 overflow-x-auto pb-2">

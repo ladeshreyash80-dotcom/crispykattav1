@@ -18,6 +18,7 @@ const CATEGORIES = [
 
 export default function Home() {
   const [items, setItems] = useState<any[]>([]);
+  const [mood, setMood] = useState('🔥 All-Time Hits');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { add, count } = useCart();
@@ -85,6 +86,13 @@ export default function Home() {
           🔥 KADHI SAMOSA ₹35  ⚡ PERI PERI VADA ₹25  🔥 PANEER MOMOS ₹80  ⚡ SPECIAL KULHAD CHAI ₹20  🔥 KADHI SAMOSA ₹35  ⚡ PERI PERI VADA ₹25  🔥 PANEER MOMOS ₹80  ⚡ SPECIAL KULHAD CHAI ₹20
         </div>
       </div>
+
+      {/* Mood filters */}
+      <section className="max-w-6xl mx-auto px-4 py-4 flex gap-2 overflow-x-auto">
+        {['🔥 All-Time Hits','💸 Broke AF (< ₹40)','🌙 Late Night Cravings','☕ Exam Night Caffeine','🧀 Loaded Cheese','🌶️ Spicy Snack'].map(m => (
+          <button key={m} onClick={() => setMood(m)} className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs border ${mood===m ? 'bg-brand text-white border-brand' : 'bg-white text-stone-700 border-stone-200'}`}>{m}</button>
+        ))}
+      </section>
 
       {/* Trust / featured strip */}
       <section className="max-w-6xl mx-auto px-4 py-6">

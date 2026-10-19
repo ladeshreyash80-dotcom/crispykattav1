@@ -5,6 +5,8 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('ck_menu') : null;
+    if (saved) { setItems(JSON.parse(saved)); setLoading(false); return; }
     const ctrl = new AbortController();
     fetch('/api/menu', { signal: ctrl.signal })
       .then(async r => {

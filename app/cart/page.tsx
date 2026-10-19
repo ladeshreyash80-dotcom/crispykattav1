@@ -7,7 +7,7 @@ export default function Cart() {
   const packaging = items.length ? 5 : 0;
   const grand = total + packaging;
   return (
-    <main className="p-4 max-w-3xl mx-auto pb-24">
+    <main className="p-4 max-w-3xl mx-auto pb-32">
       <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
       {items.length === 0 && (
         <div className="text-center py-12">

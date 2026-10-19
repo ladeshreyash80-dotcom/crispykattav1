@@ -19,7 +19,7 @@ export default function Menu() {
     return () => ctrl.abort();
   }, []);
   return (
-    <main className="p-4 max-w-5xl mx-auto">
+    <main className="p-4 max-w-5xl mx-auto pb-32">
       <h1 className="text-2xl font-bold mb-4">Menu</h1>
       {loading && <p className="text-stone-500">Loading menu…</p>}
       {error && <p className="text-red-600">Failed to load menu: {error}</p>}

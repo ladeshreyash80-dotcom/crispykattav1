@@ -4,16 +4,16 @@ import Link from 'next/link';
 import { useCart } from '@/lib/cart';
 
 const CATEGORIES = [
-  { name: 'Snacks', desc: 'Crispy bites' },
-  { name: 'Fries', desc: 'Golden & hot' },
-  { name: 'Rolls & Wraps', desc: 'Stuffed parathas' },
-  { name: 'Momos', desc: 'Steamed & fried' },
-  { name: 'Sandwich', desc: 'Toasted & grilled' },
-  { name: 'Khichdi & Patties', desc: 'Comfort food' },
-  { name: 'Burgers', desc: 'Juicy stacks' },
-  { name: 'Pizza', desc: 'Cheesy slices' },
-  { name: 'Mocktails & Tea', desc: 'Cool & hot sips' },
-  { name: 'Shakes & Desserts', desc: 'Sweet endings' },
+  { name: 'Snacks', desc: 'Crispy bites', img: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Fries', desc: 'Golden & hot', img: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Rolls & Wraps', desc: 'Stuffed parathas', img: 'https://images.unsplash.com/photo-1626700051175-656a433bcfcf?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Momos', desc: 'Steamed & fried', img: 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Sandwich', desc: 'Toasted & grilled', img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Khichdi & Patties', desc: 'Comfort food', img: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Burgers', desc: 'Juicy stacks', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Pizza', desc: 'Cheesy slices', img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Mocktails & Tea', desc: 'Cool & hot sips', img: 'https://images.unsplash.com/photo-1544145945-f904253d0c71?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Shakes & Desserts', desc: 'Sweet endings', img: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80' },
 ];
 
 export default function Home() {
@@ -144,16 +144,16 @@ export default function Home() {
 
       {/* Categories */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">Zero Fuss</div>
-        <h2 className="font-display text-2xl font-bold mb-4">Cravings, sorted</h2>
+        <div className="text-xs uppercase tracking-widest text-brand font-semibold mb-2">Cravings, sorted</div>
+        <h2 className="font-serif italic text-2xl font-bold mb-4">Cravings, sorted</h2>
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIES.map(c => (
-            <Link key={c.name} href={`/menu?cat=${encodeURIComponent(c.name)}`} className="relative rounded-3xl overflow-hidden shadow-card h-28 block">
-              <img src="/images/stall/shopfront.jpg" alt={c.name} className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+            <Link key={c.name} href={`/menu?cat=${encodeURIComponent(c.name)}`} className="relative rounded-3xl overflow-hidden shadow-card aspect-[4/5] block hover:scale-105 transition-transform duration-300">
+              <img src={c.img} alt={c.name} className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-3 left-3">
-                <div className="text-white font-bold text-sm">{c.name}</div>
-                <div className="text-white/70 text-xs">{c.desc}</div>
+                <div className="text-white font-bold text-lg">{c.name}</div>
+                <div className="text-gray-200 text-xs">{c.desc}</div>
               </div>
             </Link>
           ))}

@@ -20,7 +20,7 @@ export default function Admin() {
   const [address, setAddress] = useState(() => typeof window === 'undefined' ? 'Campus Gate No. 2, University Road' : (localStorage.getItem('ck_address') || 'Campus Gate No. 2, University Road'));
   const [upi, setUpi] = useState(() => typeof window === 'undefined' ? 'crispykatta@upi' : (localStorage.getItem('ck_upi') || 'crispykatta@upi'));
   const [hours, setHours] = useState(() => typeof window === 'undefined' ? '10:00 - 23:00' : (localStorage.getItem('ck_hours') || '10:00 - 23:00'));
-  const [orders, setOrders] = useState<any[]>(() => typeof window === 'undefined' ? [] : JSON.parse(localStorage.getItem('ck_orders') || '[]'));
+  const [orders, setOrders] = useState<any[]>(() => typeof window === 'undefined' ? [] : JSON.parse(localStorage.getItem('ck_live_orders') || '[]'));
 
   useEffect(() => { localStorage.setItem('ck_menu', JSON.stringify(items)); }, [items]);
   useEffect(() => { localStorage.setItem('ck_marquee', marquee); }, [marquee]);
@@ -29,6 +29,25 @@ export default function Admin() {
   useEffect(() => { localStorage.setItem('ck_address', address); }, [address]);
   useEffect(() => { localStorage.setItem('ck_upi', upi); }, [upi]);
   useEffect(() => { localStorage.setItem('ck_hours', hours); }, [hours]);
+
+  useEffect(() => {
+    if (!authed) return;
+    const lastCount = { n: orders.length };
+    const interval = setInterval(() => {
+      const fresh = JSON.parse(localStorage.getItem('ck_live_orders') || '[]');
+      if (fresh.length > lastCount.n) {
+        lastCount.n = fresh.length;
+        setOrders(fresh);
+        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+        audio.loop = true;
+        audio.play().catch(() => {});
+        (window as any).__ckAudio = audio;
+      } else {
+        setOrders(fresh);
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [authed]);
 
   if (!authed) {
     return (
@@ -159,10 +178,12 @@ export default function Admin() {
               <div className="font-bold">{o.reference}</div>
               <div className="text-sm text-stone-600">{o.customer_name} • {o.phone}</div>
               <div className="text-sm">Total: ₹{o.total} • Status: {o.status || 'new'}</div>
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2 mt-2 flex-wrap">
+                <button onClick={() => { const a=(window as any).__ckAudio; if(a){a.pause();} updateOrderStatus(o.reference, 'accepted'); }} className="px-3 py-1 text-xs bg-blue-100 rounded-lg">Accept Order</button>
                 <button onClick={() => updateOrderStatus(o.reference, 'preparing')} className="px-3 py-1 text-xs bg-amber-100 rounded-lg">Preparing</button>
                 <button onClick={() => updateOrderStatus(o.reference, 'ready')} className="px-3 py-1 text-xs bg-green-100 rounded-lg">Ready</button>
                 <button onClick={() => updateOrderStatus(o.reference, 'done')} className="px-3 py-1 text-xs bg-stone-200 rounded-lg">Done</button>
+                <a href={`https://wa.me/91${o.phone}?text=Your order ${o.reference} is ready at Gate 2!`} target="_blank" rel="noopener noreferrer" className="px-3 py-1 text-xs bg-green-500 text-white rounded-lg">WhatsApp Reply</a>
               </div>
             </div>
           ))}

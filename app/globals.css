@@ -1,4 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { font-family: system-ui, sans-serif; }
+
+:root {
+  --bg: #FAF7F2;
+  --surface: #FFFFFF;
+  --primary: #C0392B;
+  --primary-dark: #96281B;
+  --accent: #D4A017;
+  --text: #1C1917;
+  --muted: #78716C;
+  --border: #E7E5E4;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+h1, h2, h3 { font-family: var(--font-display), var(--font-sans), serif; }

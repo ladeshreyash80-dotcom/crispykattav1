@@ -41,14 +41,24 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="bg-charcoal text-white">
-        <div className="max-w-6xl mx-auto px-4 py-10">
+      <section className="relative text-white">
+        <img src="/images/stall/shopfront.jpg" alt="Crispy Katta shopfront" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative max-w-6xl mx-auto px-4 py-12">
           <h1 className="font-display text-4xl md:text-5xl font-bold leading-tight">Crispy. Spicy. कडक swad.</h1>
-          <p className="mt-3 text-stone-300 max-w-md">Fresh campus favourites, made hot and served fast. Order from your phone and pick up or get it delivered.</p>
+          <p className="mt-3 text-stone-200 max-w-md">Fresh campus favourites, made hot and served fast. Order from your phone and pick up or get it delivered.</p>
           <div className="mt-6 flex gap-3">
             <Link href="/menu" className="px-5 py-3 bg-brand text-white rounded-full font-semibold text-sm">Order now</Link>
             <Link href="/track" className="px-5 py-3 border border-white/40 rounded-full text-sm">Track order</Link>
           </div>
+        </div>
+      </section>
+
+      {/* Stall photo */}
+      <section className="max-w-6xl mx-auto px-4 py-6">
+        <div className="grid md:grid-cols-2 gap-4">
+          <img src="/images/stall/aerial.png" alt="Crispy Katta stall aerial view" className="w-full h-48 object-cover rounded-2xl shadow-card" />
+          <img src="/images/stall/menu-board.jpg" alt="Crispy Katta menu board" className="w-full h-48 object-cover rounded-2xl shadow-card" />
         </div>
       </section>
 

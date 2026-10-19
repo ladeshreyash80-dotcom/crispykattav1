@@ -62,7 +62,7 @@ export default function Admin() {
     <main className="p-4 max-w-5xl mx-auto pb-32">
       <h1 className="text-2xl font-bold mb-4">Owner Dashboard</h1>
       <div className="flex gap-2 mb-4 flex-wrap">
-        {['menu','marquee','settings','orders'].map(t => (
+        {['menu','marquee','settings','orders','verify'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-full text-sm ${tab === t ? 'bg-brand text-white' : 'bg-white border'}`}>{t}</button>
         ))}
       </div>
@@ -132,6 +132,22 @@ export default function Admin() {
             <label className="block text-sm font-semibold mb-1">Operating hours</label>
             <input value={hours} onChange={e => setHours(e.target.value)} className="w-full border rounded p-2 text-sm" />
           </div>
+        </div>
+      )}
+
+      {tab === 'verify' && (
+        <div className="bg-white rounded-2xl p-4 shadow-card">
+          <label className="block text-sm font-semibold mb-1">Enter voucher code</label>
+          <input id="vcode" className="w-full border rounded p-2 text-sm mb-2" placeholder="CK-CHAI-8921" />
+          <button onClick={() => {
+            const code = (document.getElementById('vcode') as HTMLInputElement).value;
+            const vs = JSON.parse(localStorage.getItem('ck_vouchers') || '[]');
+            const idx = vs.findIndex((v: any) => v.code === code && !v.used);
+            if (idx === -1) { alert('Invalid or already used'); return; }
+            vs[idx].used = true;
+            localStorage.setItem('ck_vouchers', JSON.stringify(vs));
+            alert('Redeemed: ' + vs[idx].label);
+          }} className="px-4 py-2 bg-brand text-white rounded-lg text-sm">Verify & Redeem</button>
         </div>
       )}
 

@@ -13,6 +13,16 @@ export default function Store() {
   const [rating, setRating] = useState(5);
   const [text, setText] = useState('');
   const [spinResult, setSpinResult] = useState<number | null>(null);
+  const [vouchers, setVouchers] = useState<any[]>(() => typeof window === 'undefined' ? [] : JSON.parse(localStorage.getItem('ck_vouchers') || '[]'));
+
+  const claimReward = (cost: number, label: string) => {
+    if (!redeem(cost)) return;
+    const code = 'CK-' + label.split(' ')[1]?.toUpperCase()?.slice(0,4) + '-' + Math.floor(1000 + Math.random() * 9000);
+    const v = { code, label, used: false, created: new Date().toISOString() };
+    const updated = [v, ...vouchers];
+    setVouchers(updated);
+    localStorage.setItem('ck_vouchers', JSON.stringify(updated));
+  };
 
   const submitFeedback = () => {
     const entry = { name, rating, text, time: new Date().toLocaleString() };
@@ -101,12 +111,24 @@ export default function Store() {
           {rewards.map(r => (
             <div key={r.cost} className="flex items-center justify-between text-sm">
               <span>🪙 {r.cost} Coins → {r.label}</span>
-              <button onClick={() => redeem(r.cost)} className="px-3 py-1 bg-brand text-white text-xs rounded-lg">Redeem</button>
+              <button onClick={() => claimReward(r.cost, r.label)} className="px-3 py-1 bg-brand text-white text-xs rounded-lg">Claim Reward</button>
             </div>
           ))}
         </div>
         <button onClick={() => { const w = spin(); setSpinResult(w); }} className="w-full py-2 bg-charcoal text-white rounded-lg text-sm">Daily Lucky Spin</button>
         {spinResult !== null && <p className="text-sm mt-2 text-center">You won {spinResult} coins! 🎉</p>}
+      </div>
+
+      {/* Vouchers */}
+      <div className="bg-white rounded-3xl p-5 shadow-card mb-4">
+        <div className="font-bold mb-2">Your Vouchers</div>
+        {vouchers.length === 0 && <p className="text-xs text-stone-500">No vouchers yet.</p>}
+        {vouchers.map(v => (
+          <div key={v.code} className="border rounded-xl p-3 mb-2">
+            <div className="font-bold text-sm">{v.label}</div>
+            <div className="text-xs text-stone-600">Code: {v.code} {v.used ? '(USED)' : ''}</div>
+          </div>
+        ))}
       </div>
 
       {/* Feedback */}

@@ -4,8 +4,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: { DEFAULT: '#C0392B', dark: '#96281B' },
-        cream: '#FAF7F2',
+        brand: { DEFAULT: '#E04F16', dark: '#C0392B' },
+        cream: '#FAF5E8',
         charcoal: '#1C1917',
         gold: '#D4A017',
       },

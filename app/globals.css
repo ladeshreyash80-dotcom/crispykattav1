@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg: #FAF7F2;
+  --bg: #FAF5E8;
   --surface: #FFFFFF;
   --primary: #C0392B;
   --primary-dark: #96281B;
@@ -20,3 +20,5 @@ body {
 }
 
 h1, h2, h3 { font-family: var(--font-display), var(--font-sans), serif; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.animate-marquee { display: inline-block; animation: marquee 20s linear infinite; }

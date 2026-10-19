@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
+import { getImageUrl } from '@/lib/images';
 
 const CATS = [
   { emoji: '🥟', name: 'Momos' },
@@ -130,7 +131,7 @@ export default function Home() {
           {popular.map(i => (
             <div key={i.id} onClick={() => openModal(i)} className="bg-white rounded-2xl shadow-card overflow-hidden cursor-pointer">
               <div className="relative">
-                <img src={i.image_url} alt={i.name} className="w-full h-32 object-cover" />
+                <img src={getImageUrl(i)} alt={i.name} className="w-full h-32 object-cover" />
                 <span className="absolute top-2 left-2 text-xs">🟢</span>
                 {i.is_popular && <span className="absolute top-2 right-2 bg-brand text-white text-[10px] px-2 py-0.5 rounded-full">🔥 Popular</span>}
                 <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full">⭐ 4.6</span>
@@ -164,7 +165,7 @@ export default function Home() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end" onClick={() => setSelected(null)}>
           <div className="bg-white w-full rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <button onClick={() => setSelected(null)} className="absolute top-3 right-4 text-xl">✕</button>
-            <img src={selected.image_url} alt={selected.name} className="w-full h-40 object-cover rounded-2xl mb-3" />
+            <img src={getImageUrl(selected)} alt={selected.name} className="w-full h-40 object-cover rounded-2xl mb-3" />
             <div className="font-bold text-lg">{selected.name}</div>
             <div className="text-sm text-stone-500 mb-2">{selected.description}</div>
             <div className="font-bold text-brand mb-3">₹{selected.price}</div>

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { MOCK_MENU } from '@/lib/mockMenu';
+import { setCustomPhoto, resetCustomPhotos } from '@/lib/images';
 
 const PIN = '1234';
 
@@ -69,6 +70,7 @@ export default function Admin() {
       {tab === 'menu' && (
         <div>
           <button onClick={addNewItem} className="mb-3 px-4 py-2 bg-brand text-white rounded-lg text-sm">+ Add New Item</button>
+          <button onClick={() => { resetCustomPhotos(); alert('Reset to defaults'); }} className="mb-3 ml-2 px-4 py-2 border rounded-lg text-sm">Reset to Default Photos</button>
           <div className="space-y-2">
             {items.map(i => (
               <div key={i.id} className="bg-white rounded-2xl p-3 shadow-card flex items-center gap-3">
@@ -79,6 +81,17 @@ export default function Admin() {
                   </div>
                 </div>
                 <button onClick={() => toggleStock(i.id)} className={`px-3 py-1 text-xs rounded-full ${i.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{i.available ? 'In Stock' : 'Sold Out'}</button>
+                <label className="px-3 py-1 text-xs rounded-full bg-stone-200 cursor-pointer">
+                  📷 Change Photo
+                  <input type="file" accept="image/*" className="hidden" onChange={e => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    const r = new FileReader();
+                    r.onload = () => { setCustomPhoto(i.id, r.result as string); alert('Photo saved'); };
+                    r.readAsDataURL(f);
+                  }} />
+                </label>
+                <button onClick={() => { const url = prompt('Image URL?'); if (url) { setCustomPhoto(i.id, url); alert('Photo saved'); } }} className="px-3 py-1 text-xs rounded-full bg-stone-200">🔗 Paste URL</button>
                 <button onClick={() => deleteItem(i.id)} className="px-3 py-1 text-xs rounded-full bg-red-500 text-white">Delete</button>
               </div>
             ))}

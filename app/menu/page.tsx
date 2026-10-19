@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useCart } from '@/lib/cart';
+import { getImageUrl } from '@/lib/images';
 
 const CATS = ['All','Momos','Rolls & Wraps','Snacks & Fries','Sandwiches','Beverages','Desserts'];
 
@@ -55,7 +56,7 @@ export default function Menu() {
           return (
             <div key={i.id} className="bg-white rounded-2xl shadow-card overflow-hidden">
               <div className="relative">
-                <img src={i.image_url} alt={i.name} className="w-full h-36 object-cover rounded-t-2xl" />
+                <img src={getImageUrl(i)} alt={i.name} className="w-full h-36 object-cover rounded-t-2xl" />
                 {i.is_popular && <span className="absolute top-2 left-2 bg-brand text-white text-xs px-2 py-0.5 rounded-full">🔥 Bestseller</span>}
               </div>
               <div className="p-3">

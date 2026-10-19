@@ -1,10 +1,12 @@
 'use client';
 import { useState } from 'react';
 import { useCart } from '@/lib/cart';
+import { useRewards } from '@/lib/rewards';
 import { useRouter } from 'next/navigation';
 
 export default function Checkout() {
   const { items, total, clear } = useCart();
+  const { earn } = useRewards();
   const router = useRouter();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -19,6 +21,7 @@ export default function Checkout() {
     const orders = JSON.parse(localStorage.getItem('ck_orders') || '[]');
     orders.push(order);
     localStorage.setItem('ck_orders', JSON.stringify(orders));
+    earn(grand);
     clear();
     router.push(`/track?ref=${reference}`);
   };

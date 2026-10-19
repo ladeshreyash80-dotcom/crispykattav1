@@ -82,3 +82,6 @@ create table if not exists rewards (
 create index idx_orders_phone on orders(phone);
 create index idx_order_items_order on order_items(order_id);
 create index idx_loyalty_tx_account on loyalty_transactions(account_id);
+
+-- DEMO SEED DATA (safe to remove in production)
+insert into categories (name, sort_order) values ('Snacks',1),('Momos',2),('Rolls',3) on conflict do nothing;
